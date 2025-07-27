@@ -1,0 +1,15 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: calc(100% - 32px);
+  max-width: 700px;
+  padding: 16px;
+  margin: 0 auto;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

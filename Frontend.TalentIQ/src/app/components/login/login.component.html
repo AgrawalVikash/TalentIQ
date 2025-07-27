@@ -1,0 +1,47 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <h2 class="login-title">Talent IQ</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput placeholder="Enter your email" [formControl]="email" />
+        @if (emailInvalid()) {
+        <mat-error *ngIf="email.hasError('required')"
+          >Email is required</mat-error
+        >
+        <mat-error *ngIf="email.hasError('email')">Invalid email</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          type="password"
+          placeholder="Enter your password"
+          [formControl]="password"
+        />
+        @if (passwordInvalid()) {
+        <mat-error>Password is required</mat-error>
+        }
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        class="login-button"
+        type="submit"
+        [disabled]="loginForm.invalid"
+      >
+        <mat-progress-spinner
+          *ngIf="isSubmitting()"
+          diameter="20"
+          mode="indeterminate"
+          color="accent"
+          class="spinner"
+        ></mat-progress-spinner>
+        <span *ngIf="!isSubmitting()">Login</span>
+      </button>
+    </form>
+  </mat-card>
+</div>

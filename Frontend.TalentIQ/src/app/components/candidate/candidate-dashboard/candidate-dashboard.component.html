@@ -1,0 +1,177 @@
+<!-- <mat-toolbar color="primary">
+  <span>Candidate Dashboard</span>
+  <span class="flex-spacer"></span>
+  <button mat-raised-button color="accent" (click)="openAdd()">
+    <mat-icon>person_add</mat-icon> Add Candidate
+  </button>
+</mat-toolbar>
+<div class="table">
+  <table mat-table [dataSource]="candidates()" class="mat-elevation-z8">
+    <ng-container matColumnDef="name"
+      ><th mat-header-cell *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let c">{{ c.name }}</td></ng-container
+    >
+    <ng-container matColumnDef="email"
+      ><th mat-header-cell *matHeaderCellDef>Email</th>
+      <td mat-cell *matCellDef="let c">{{ c.email }}</td></ng-container
+    >
+    <ng-container matColumnDef="phone"
+      ><th mat-header-cell *matHeaderCellDef>Phone</th>
+      <td mat-cell *matCellDef="let c">{{ c.phone }}</td></ng-container
+    >
+    <ng-container matColumnDef="jobId"
+      ><th mat-header-cell *matHeaderCellDef>Job ID</th>
+      <td mat-cell *matCellDef="let c">{{ c.jobId }}</td></ng-container
+    >
+    <ng-container matColumnDef="resume">
+      <th mat-header-cell *matHeaderCellDef>Resume</th>
+      <td mat-cell *matCellDef="let c">
+        <a [href]="getResumeUrl(c.resumePath)" target="_blank">View</a>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="status"
+      ><th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let c">{{ c.status }}</td></ng-container
+    >
+    <ng-container matColumnDef="createdAt"
+      ><th mat-header-cell *matHeaderCellDef>Created</th>
+      <td mat-cell *matCellDef="let c">
+        {{ c.createdAt | date : "short" }}
+      </td></ng-container
+    >
+    <ng-container matColumnDef="interview">
+      <th mat-header-cell *matHeaderCellDef>Interview Link</th>
+      <td mat-cell *matCellDef="let c">
+        <ng-container *ngIf="c.interviewLink">
+          <a [href]="c.interviewLink" target="_blank">Open</a><br />
+          <small>Expires: {{ c.interviewLinkExpiry | date : "short" }}</small>
+        </ng-container>
+        <ng-container *ngIf="!c.interviewLink">—</ng-container>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let c">
+        <button mat-button (click)="trigger(c)">Generate Link</button>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="cols"></tr>
+    <tr mat-row *matRowDef="let row; columns: cols"></tr>
+  </table>
+</div> -->
+<!-- <mat-toolbar color="primary">
+  <span>Candidate Dashboard</span>
+  <span class="spacer"></span>
+  <button mat-raised-button color="accent" (click)="openAddDialog()">
+    <mat-icon>person_add</mat-icon> Add Candidate
+  </button>
+</mat-toolbar>
+
+<div *ngIf="candidates().length === 0" class="empty-state">
+  <p>No candidates found. Click "Add Candidate" to get started.</p>
+</div>
+
+<div *ngIf="candidates().length > 0" class="table-container">
+  <table mat-table [dataSource]="candidates()" class="mat-elevation-z8">
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let c">{{c.name}}</td>
+    </ng-container>
+    
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let c">
+        <button mat-button (click)="generateLink(c)">Generate Link</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div> -->
+
+<mat-toolbar color="primary">
+  <span>Candidate Dashboard</span>
+  <span class="spacer"></span>
+  <button mat-raised-button color="accent" (click)="openAddDialog()">
+    <mat-icon>person_add</mat-icon> Add Candidate
+  </button>
+</mat-toolbar>
+
+<div *ngIf="candidates().length === 0" class="empty-state">
+  <p>No candidates found. Click "Add Candidate" to get started.</p>
+</div>
+
+<div *ngIf="candidates().length > 0" class="table-container">
+  <table mat-table [dataSource]="candidates()" class="mat-elevation-z8">
+
+    <!-- Name -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let c">{{ c.name }}</td>
+    </ng-container>
+
+    <!-- Email -->
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef>Email</th>
+      <td mat-cell *matCellDef="let c">{{ c.email }}</td>
+    </ng-container>
+
+    <!-- Phone -->
+    <ng-container matColumnDef="phone">
+      <th mat-header-cell *matHeaderCellDef>Phone</th>
+      <td mat-cell *matCellDef="let c">{{ c.phone }}</td>
+    </ng-container>
+
+    <!-- Job ID -->
+    <ng-container matColumnDef="jobId">
+      <th mat-header-cell *matHeaderCellDef>Job ID</th>
+      <td mat-cell *matCellDef="let c">{{ c.jobId }}</td>
+    </ng-container>
+
+    <!-- Resume -->
+    <ng-container matColumnDef="resume">
+      <th mat-header-cell *matHeaderCellDef>Resume</th>
+      <!-- <td mat-cell *matCellDef="let c">
+        <a [href]="getResumeUrl(c.resumePath)" target="_blank">View</a>
+      </td> -->
+      <td mat-cell *matCellDef="let c">{{ c.resumePath }}</td>
+    </ng-container>
+
+    <!-- Status -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let c">{{ c.status }}</td>
+    </ng-container>
+
+    <!-- Created At -->
+    <ng-container matColumnDef="createdAt">
+      <th mat-header-cell *matHeaderCellDef>Created</th>
+      <td mat-cell *matCellDef="let c">{{ c.createdAt | date: 'short' }}</td>
+    </ng-container>
+
+    <!-- Interview Link -->
+    <ng-container matColumnDef="interview">
+      <th mat-header-cell *matHeaderCellDef>Interview Link</th>
+      <td mat-cell *matCellDef="let c">
+        <ng-container *ngIf="c.interviewLink">
+          <a [href]="c.interviewLink" target="_blank">Open</a><br />
+          <small>Expires: {{ c.interviewLinkExpiry | date: 'short' }}</small>
+        </ng-container>
+        <ng-container *ngIf="!c.interviewLink">—</ng-container>
+      </td>
+    </ng-container>
+
+    <!-- Actions -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let c">
+        <button mat-button (click)="generateLink(c)">Generate Link</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
+
