@@ -6,12 +6,12 @@
   </button>
 </mat-toolbar>
 
-<div *ngIf="candidates().length > 0" class="empty-state">
+<div *ngIf="candidates().length === 0" class="empty-state">
   <mat-icon color="warn">group_off</mat-icon>
   <p>No candidates found. Click "Add Candidate" to get started.</p>
 </div>
 
-<div *ngIf="candidates().length == 0" class="table-container">
+<div *ngIf="candidates().length > 0" class="table-container">
   <table
     mat-table
     [dataSource]="candidates()"

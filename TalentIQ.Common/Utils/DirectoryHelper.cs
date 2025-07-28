@@ -1,13 +1,17 @@
-﻿namespace TalentIQ.Service.Utils
+﻿namespace TalentIQ.Common.Utils
 {
     public static class DirectoryHelper
     {
-        public static void EnsureDirectoryExists(string filePath)
+        public static void EnsureDirectoryExists(string directoryPath)
         {
-            //var directory = Path.GetDirectoryName(filePath);
-            if (!Directory.Exists(filePath))
+            if (string.IsNullOrWhiteSpace(directoryPath))
+                throw new ArgumentException("Directory path cannot be null or empty.", nameof(directoryPath));
+
+            var fullPath = Path.GetFullPath(directoryPath);
+
+            if (!Directory.Exists(fullPath))
             {
-                Directory.CreateDirectory(filePath);
+                Directory.CreateDirectory(fullPath);
             }
         }
     }

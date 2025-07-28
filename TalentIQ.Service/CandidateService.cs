@@ -6,16 +6,17 @@ namespace TalentIQ.Service
 {
     public class CandidateService(ICandidateRepository repository) : ICandidateService
     {
-        private readonly ICandidateRepository _repository = repository;
+        private readonly ICandidateRepository _repository = repository ?? throw new ArgumentNullException(nameof(repository));
 
         public Task<List<Candidate>> GetCandidatesAsync() => _repository.GetCandidatesAsync();
 
         public async Task<Candidate> AddCandidateAsync(CandidateUploadDto dto)
         {
+            ArgumentNullException.ThrowIfNull(dto);
             if (dto.Resume == null || dto.Resume.Length == 0)
-                throw new ArgumentException("Resume file is required.");
+                throw new ArgumentNullException(nameof(dto.Resume), "Resume file is required.");
 
-            var resumePath = await _repository.SaveResumeAsync(dto.Resume);
+            var resumePath = await _repository.SaveResumeAsync(dto.Resume).ConfigureAwait(false);
 
             var candidate = new Candidate
             {
@@ -28,7 +29,7 @@ namespace TalentIQ.Service
                 CreatedAt = DateTime.UtcNow
             };
 
-            await _repository.AddCandidateAsync(candidate);
+            await _repository.AddCandidateAsync(candidate).ConfigureAwait(false);
             return candidate;
         }
     }
