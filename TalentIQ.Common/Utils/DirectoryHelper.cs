@@ -7,11 +7,9 @@
             if (string.IsNullOrWhiteSpace(directoryPath))
                 throw new ArgumentException("Directory path cannot be null or empty.", nameof(directoryPath));
 
-            var fullPath = Path.GetFullPath(directoryPath);
-
-            if (!Directory.Exists(fullPath))
+            if (!Directory.Exists(directoryPath))
             {
-                Directory.CreateDirectory(fullPath);
+                Directory.CreateDirectory(directoryPath);
             }
         }
     }

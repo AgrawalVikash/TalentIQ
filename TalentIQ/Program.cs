@@ -28,7 +28,7 @@ builder.Services.AddSwaggerGen();
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
 if (allowedOrigins == null || allowedOrigins.Length == 0)
 {
-    allowedOrigins = new[] { "http://localhost:4200" }; // fallback
+    allowedOrigins = ["http://localhost:4200"]; // fallback
 }
 
 builder.Services.AddCors(options =>

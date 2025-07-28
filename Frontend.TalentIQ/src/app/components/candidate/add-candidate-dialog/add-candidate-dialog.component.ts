@@ -27,7 +27,15 @@ export class AddCandidateDialogComponent {
   form = this.fb.group({
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    phone: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+    phone: [
+      '',
+      [
+        Validators.required,
+        Validators.pattern('^[0-9]+$'),
+        Validators.minLength(10),
+        Validators.maxLength(10),
+      ],
+    ],
     jobId: ['', Validators.required],
   });
 

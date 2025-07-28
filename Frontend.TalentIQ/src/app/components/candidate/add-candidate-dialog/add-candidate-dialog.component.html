@@ -35,6 +35,14 @@
     <mat-error *ngIf="form.get('phone')?.hasError('pattern')">
       Only numbers allowed
     </mat-error>
+    <mat-error
+      *ngIf="
+        form.get('phone')?.hasError('minlength') ||
+        form.get('phone')?.hasError('maxlength')
+      "
+    >
+      Phone number must be exactly 10 digits
+    </mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="fill">
