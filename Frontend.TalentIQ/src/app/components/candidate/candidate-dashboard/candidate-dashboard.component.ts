@@ -1,3 +1,5 @@
+import { take } from 'rxjs';
+
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -41,67 +43,96 @@ export class CandidateDashboardComponent implements OnInit {
     'interview',
     'actions',
   ];
+  loading = false;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadCandidates();
   }
 
-  loadCandidates() {
+  loadCandidates(): void {
+    this.loading = true;
     this.candidateService
       .getCandidates()
-      .subscribe((data) => this.candidates.set(data));
+      .pipe(take(1))
+      .subscribe({
+        next: (data) => {
+          this.candidates.set(data);
+          this.loading = false;
+        },
+        error: () => {
+          this.snackBar.open('Failed to load candidates.', 'Close', {
+            duration: 3000,
+          });
+          this.loading = false;
+        },
+      });
   }
 
-  openAddDialog() {
+  openAddDialog(): void {
     this.dialog
       .open(AddCandidateDialogComponent, {
         width: '45vw',
         maxWidth: '90vw',
       })
       .afterClosed()
+      .pipe(take(1))
       .subscribe((res) => {
         if (res) {
+          this.loading = true;
           this.candidateService
             .addCandidate(res.form, res.resume)
-            .subscribe((c) => {
-              this.snackBar.open('Candidate added successfully!', 'Close', {
-                duration: 3000,
-              });
-              this.loadCandidates();
+            .pipe(take(1))
+            .subscribe({
+              next: () => {
+                this.snackBar.open('Candidate added successfully!', 'Close', {
+                  duration: 3000,
+                });
+                this.loadCandidates();
+              },
+              error: () => {
+                this.snackBar.open('Failed to add candidate.', 'Close', {
+                  duration: 3000,
+                });
+                this.loading = false;
+              },
             });
         }
       });
   }
 
-  // generatLink(candidate: Candidate) {
-  //   this.candidateService
-  //     .generateInterviewLink(candidate.id)
-  //     .subscribe((linkData) => {
-  //       this.candidates.update((list) =>
-  //         list.map((c) => (c.id === candidate.id ? { ...c, ...linkData } : c))
-  //       );
-  //     });
-  // }
-
-  getResumeUrl(path: string) {
+  getResumeUrl(path: string): string {
     return `https://localhost:5001${path}`;
   }
 
-  generateLink(candidate: Candidate) {
+  generateLink(candidate: Candidate): void {
+    this.loading = true;
     this.candidateService
       .generateInterviewLink(candidate.id)
-      .subscribe((linkData) => {
-        this.candidates.update((list) =>
-          list.map((c) =>
-            c.id === candidate.id
-              ? {
-                  ...c,
-                  interviewLink: linkData.interviewLink,
-                  interviewLinkExpiry: linkData.interviewLinkExpiry,
-                }
-              : c
-          )
-        );
+      .pipe(take(1))
+      .subscribe({
+        next: (linkData) => {
+          this.candidates.update((list) =>
+            list.map((c) =>
+              c.id === candidate.id
+                ? {
+                    ...c,
+                    interviewLink: linkData.interviewLink,
+                    interviewLinkExpiry: linkData.interviewLinkExpiry,
+                  }
+                : c
+            )
+          );
+          this.snackBar.open('Interview link generated!', 'Close', {
+            duration: 3000,
+          });
+          this.loading = false;
+        },
+        error: () => {
+          this.snackBar.open('Failed to generate interview link.', 'Close', {
+            duration: 3000,
+          });
+          this.loading = false;
+        },
       });
   }
 }

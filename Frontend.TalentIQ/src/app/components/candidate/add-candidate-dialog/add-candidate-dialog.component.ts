@@ -1,10 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-add-candidate-dialog',
@@ -27,7 +27,7 @@ export class AddCandidateDialogComponent {
   form = this.fb.group({
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    phone: ['', Validators.required, Validators.pattern('^[0-9]+$')],
+    phone: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
     jobId: ['', Validators.required],
   });
 
@@ -40,25 +40,28 @@ export class AddCandidateDialogComponent {
       const allowedTypes = [
         'application/pdf',
         'text/plain',
+        'application/msword',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       ];
 
       if (allowedTypes.includes(file.type)) {
         this.resume = file;
       } else {
-        alert('Only PDF, TXT, and DOC files are allowed.');
+        alert('Only PDF, TXT, DOC, and DOCX files are allowed.');
+        this.resume = null; // Clear resume on invalid file
         input.value = ''; // Reset the input
       }
     }
   }
 
-  submit() {
+  submit(): void {
     if (this.form.valid && this.resume) {
       this.dialogRef.close({ form: this.form.value, resume: this.resume });
     }
   }
 
-  close() {
+  close(): void {
+    this.resume = null; // Clear resume on close
     this.dialogRef.close();
   }
 }

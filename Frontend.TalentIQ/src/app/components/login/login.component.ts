@@ -41,19 +41,21 @@ export class LoginComponent {
   readonly passwordInvalid = computed(
     () => this.password.touched && this.password.invalid
   );
-  readonly isSubmitting = signal(false);
+  readonly isSubmitting = signal<boolean>(false);
+  readonly loginError = signal<string | null>(null);
 
   constructor(private router: Router) {}
 
-  onSubmit() {
+  onSubmit(): void {
     if (!this.loginForm.valid || this.isSubmitting()) return;
 
     this.isSubmitting.set(true);
-    console.log('Form Data:', this.loginForm.getRawValue());
+    this.loginError.set(null);
 
     setTimeout(() => {
       this.isSubmitting.set(false);
       this.router.navigate(['/dashboard']);
+      this.loginForm.reset();
     }, 1500);
   }
 }

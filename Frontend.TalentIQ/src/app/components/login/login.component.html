@@ -4,13 +4,18 @@
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Email</mat-label>
-        <input matInput placeholder="Enter your email" [formControl]="email" />
-        @if (emailInvalid()) {
-        <mat-error *ngIf="email.hasError('required')"
-          >Email is required</mat-error
-        >
-        <mat-error *ngIf="email.hasError('email')">Invalid email</mat-error>
-        }
+        <input
+          matInput
+          placeholder="Enter your email"
+          [formControl]="email"
+          autocomplete="email"
+        />
+        <mat-error *ngIf="email.hasError('required') && email.touched">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="email.hasError('email') && email.touched">
+          Invalid email
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="full-width">
@@ -20,10 +25,11 @@
           type="password"
           placeholder="Enter your password"
           [formControl]="password"
+          autocomplete="current-password"
         />
-        @if (passwordInvalid()) {
-        <mat-error>Password is required</mat-error>
-        }
+        <mat-error *ngIf="password.hasError('required') && password.touched">
+          Password is required
+        </mat-error>
       </mat-form-field>
 
       <button
@@ -31,7 +37,7 @@
         color="primary"
         class="login-button"
         type="submit"
-        [disabled]="loginForm.invalid"
+        [disabled]="loginForm.invalid || isSubmitting()"
       >
         <mat-progress-spinner
           *ngIf="isSubmitting()"

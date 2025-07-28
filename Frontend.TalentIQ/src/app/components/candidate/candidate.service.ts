@@ -12,7 +12,7 @@ export class CandidateService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = ENVIRONMENT_CONSTANTS.apiBaseUrl;
 
-  // readonly candidates = signal<Candidate[]>([]);
+  readonly candidates = signal<Candidate[]>([]);
 
   getCandidates(): Observable<Candidate[]> {
     return this.http.get<Candidate[]>(this.getUrl(CANDIDATE_ENDPOINTS.getAll));
@@ -20,7 +20,26 @@ export class CandidateService {
 
   addCandidate(data: Partial<Candidate>, resume: File): Observable<Candidate> {
     const formData = this.createFormData(data, resume);
-    return this.http.post<Candidate>(this.getUrl(CANDIDATE_ENDPOINTS.add), formData);
+    return this.http.post<Candidate>(
+      this.getUrl(CANDIDATE_ENDPOINTS.add),
+      formData
+    );
+  }
+
+  updateCandidate(
+    id: number,
+    data: Partial<Candidate>,
+    resume?: File
+  ): Observable<Candidate> {
+    const formData = this.createFormData(data, resume);
+    return this.http.put<Candidate>(
+      this.getUrl(CANDIDATE_ENDPOINTS.update(id)),
+      formData
+    );
+  }
+
+  deleteCandidate(id: number): Observable<void> {
+    return this.http.delete<void>(this.getUrl(CANDIDATE_ENDPOINTS.delete(id)));
   }
 
   generateInterviewLink(
@@ -32,12 +51,14 @@ export class CandidateService {
     }>(`${this.baseUrl}/${id}/generate-link`, {});
   }
 
-  private createFormData(data: Record<string, any>, file: File): FormData {
+  private createFormData(data: Record<string, any>, file?: File): FormData {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (value != null) formData.append(key, String(value));
     });
-    formData.append('resume', file);
+    if (file) {
+      formData.append('resume', file);
+    }
     return formData;
   }
 
