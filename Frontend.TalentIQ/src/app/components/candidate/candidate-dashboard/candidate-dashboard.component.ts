@@ -36,7 +36,6 @@ export class CandidateDashboardComponent implements OnInit {
     'email',
     'phone',
     'jobId',
-    'resume',
     'status',
     'createdAt',
     'interview',
