@@ -1,19 +1,9 @@
 streamlit
-# pandas
 openai
 PyMuPDF
-# python-docx
 opencv-python
-# openpyxl
-# requests
-# uuid
+docx2txt
+Pillow
+numpy
 # pip install -r requirements.txt
 # streamlit run app.py
-
-docx2txt
-opencv-python
-Pillow
-
-
-
-

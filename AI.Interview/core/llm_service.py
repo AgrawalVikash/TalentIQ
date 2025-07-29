@@ -4,50 +4,79 @@ import random
 client = OpenAI(api_key="")
 
 def generate_question(jd, resume, project, experience):
-    level = "basic" if experience <= 2 else "intermediate" if experience <= 5 else "advanced"
+    """
+    Generate a smart interview question based on candidate's experience and provided documents.
+    """
+    if experience is None:
+        level = "basic"
+    elif experience <= 2:
+        level = "basic"
+    elif experience <= 5:
+        level = "intermediate"
+    else:
+        level = "advanced"
+
+    question_types = [
+        "technical",
+        "behavioral",
+        "situational",
+        "problem-solving"
+    ]
+    chosen_type = random.choice(question_types)
+
     prompt = f"""
-    You are a technical interviewer. Based on the following:
+    You are an expert interviewer. Based on the following:
     - Job Description: {jd}
     - Resume: {resume}
     - Project Requirements: {project}
     - Candidate experience: {experience} years
-    Ask a {level} technical interview question.
+
+    Ask a {level} {chosen_type} interview question that is relevant to the candidate's background and the job requirements.
+    Make sure the question is clear, concise, and challenging for the candidate's experience level.
     """
-    response = client.chat.completions.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.choices[0].message.content.strip()
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Error generating question: {e}"
 
-# def evaluate_answer(question, answer):
-#     prompt = f"""
-#     Evaluate this candidate answer.
-#     Question: {question}
-#     Answer: {answer}
-
-#     Give a score from 1 to 10 based on the correctness, completeness, and depth of the answer.
-#     Just reply with the number only.
-#     """
-#     response = client.chat.completions.create(
-#         model="gpt-4",
-#         messages=[{"role": "user", "content": prompt}]
-#     )
-#     try:
-#         score = int(response.choices[0].message.content.strip())
-#         return min(max(score, 1), 10)
-#     except:
-#         return random.randint(4, 7)
-    
 def evaluate_answers(qa_log):
-    prompt = f"Evaluate the following Q&A:\n{qa_log}\nGive a fair hiring recommendation."
-    response = client.chat.completions.create(model="gpt-4", messages=[{"role": "user", "content": prompt}])
-    return response.choices[0].message.content.strip()
+    """
+    Evaluate the candidate's answers and provide a detailed hiring recommendation.
+    """
+    prompt = f"""
+    You are a senior technical interviewer.
+    Evaluate the following Q&A session:
+
+    {qa_log}
+
+    Please provide:
+    - A summary of the candidate's strengths
+    - Weaknesses or gaps observed
+    - Areas for improvement
+    - A fair and detailed hiring recommendation (hire/no hire and why)
+    Format your response in clear bullet points.
+    """
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Error evaluating answers: {e}"
 
 def generate_feedback(df):
+    """
+    Generate a detailed feedback report based on the interview Q&A.
+    """
     questions = "\n".join(df["Question"])
     answers = "\n".join(df["Answer"])
     prompt = f"""
-    Based on the following questions and answers, give a brief performance feedback:
+    Based on the following interview questions and candidate answers, provide a detailed performance feedback report.
 
     Questions:
     {questions}
@@ -55,10 +84,19 @@ def generate_feedback(df):
     Answers:
     {answers}
 
-    Provide strengths, weaknesses, and areas of improvement.
+    Please include:
+    - Strengths
+    - Weaknesses
+    - Areas of improvement
+    - Overall impression
+    - Recommendation for hiring (with justification)
+    Format your feedback in clear sections.
     """
-    response = client.chat.completions.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    return response.choices[0].message.content.strip()
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Error generating feedback: {e}"
