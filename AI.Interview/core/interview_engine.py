@@ -6,15 +6,24 @@ def ensure_dir_exists(directory):
     if not os.path.exists(directory):
         os.makedirs(directory, exist_ok=True)
 
-def init_session(interview_id):
-    ensure_dir_exists("reports")
-    path = f"reports/session_{interview_id}.json"
-    with open(path, "w") as f:
-        json.dump([], f)
+def get_session_path(interview_id, session_folder="reports"):
+    ensure_dir_exists(session_folder)
+    return os.path.join(session_folder, f"session_{interview_id}.json")
+
+def get_report_path(interview_id, session_folder="reports"):
+    ensure_dir_exists(session_folder)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    return os.path.join(session_folder, f"interview_report_{interview_id}_{timestamp}.txt")
+
+def init_session(interview_id, session_folder="reports"):
+    path = get_session_path(interview_id, session_folder)
+    if not os.path.exists(path):
+        with open(path, "w") as f:
+            json.dump([], f)
     return path
 
-def log_question_answer(interview_id, question, answer):
-    path = f"reports/session_{interview_id}.json"
+def log_question_answer(interview_id, question, answer, session_folder="reports"):
+    path = get_session_path(interview_id, session_folder)
     entry = {
         "timestamp": datetime.now().isoformat(),
         "event_type": "question_answer",
@@ -32,8 +41,8 @@ def log_question_answer(interview_id, question, answer):
     with open(path, "w") as f:
         json.dump(logs, f, indent=4)
 
-def log_event(interview_id, event_type, message, extra=None):
-    path = f"reports/session_{interview_id}.json"
+def log_event(interview_id, event_type, message, extra=None, session_folder="reports"):
+    path = get_session_path(interview_id, session_folder)
     entry = {
         "timestamp": datetime.now().isoformat(),
         "event_type": event_type,
@@ -52,8 +61,8 @@ def log_event(interview_id, event_type, message, extra=None):
     with open(path, "w") as f:
         json.dump(logs, f, indent=4)
 
-def load_session_log(interview_id):
-    path = f"reports/session_{interview_id}.json"
+def load_session_log(interview_id, session_folder="reports"):
+    path = get_session_path(interview_id, session_folder)
     if os.path.exists(path):
         with open(path, "r") as f:
             try:
@@ -62,9 +71,8 @@ def load_session_log(interview_id):
                 return []
     return []
 
-def save_report(interview_id, report_text):
-    ensure_dir_exists("reports")
-    report_path = f"reports/interview_report_{interview_id}.txt"
+def save_report(interview_id, report_text, session_folder="reports"):
+    report_path = get_report_path(interview_id, session_folder)
     with open(report_path, "w") as f:
         f.write(report_text)
     return report_path

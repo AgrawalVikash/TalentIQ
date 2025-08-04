@@ -125,7 +125,7 @@ MANIFEST
 
 # Logs and reports
 reports/
-face_snapshots/
+sessions/
 
 # Unit test / coverage reports
 htmlcov/

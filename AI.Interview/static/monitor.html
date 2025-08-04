@@ -1,0 +1,94 @@
+<!-- monitor.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interview Monitor</title>
+    <style>
+        body {
+            background-color: #111;
+            color: white;
+            text-align: center;
+            padding-top: 30px;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h2>📋 Interview Instructions</h2>
+    <div style="margin:auto; width:80%; text-align:left; background:#222;padding:20px;border-radius:8px;">
+        <ul>
+            <li>Please stay in front of the camera.</li>
+            <li>Avoid switching tabs or using keyboard shortcuts.</li>
+            <li>The interview will be auto-monitored for integrity.</li>
+        </ul>
+    </div>
+    <br>
+    <button onclick="startExam()">Start Interview</button>
+
+    <script>
+        function sendLog(event, details) {
+            fetch("/log", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ event: event, details: details })
+            }).catch(err => console.error("Logging failed:", err));
+        }
+
+        document.addEventListener('contextmenu', event => {
+            event.preventDefault();
+            sendLog("RightClickBlocked", "Right-click blocked");
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (
+                e.key === "F12" ||
+                (e.ctrlKey && e.shiftKey && e.key === "I") ||
+                (e.ctrlKey && e.shiftKey && e.key === "J") ||
+                (e.ctrlKey && e.shiftKey && e.key === "C") ||
+                (e.ctrlKey && e.key === "U") ||
+                (e.ctrlKey && e.key === "C") ||
+                (e.ctrlKey && e.key === "V") ||
+                (e.metaKey && e.key === "Q") ||
+                (e.key === "Escape")
+            ) {
+                e.preventDefault();
+                sendLog("BlockedShortcut", `Key pressed: ${e.key}`);
+            }
+        });
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                sendLog("TabSwitch", "Page hidden or tab switched");
+            }
+        });
+
+        document.addEventListener("copy", e => {
+            e.preventDefault();
+            sendLog("CopyBlocked", "Copy event blocked");
+        });
+
+        document.addEventListener("paste", e => {
+            e.preventDefault();
+            sendLog("PasteBlocked", "Paste event blocked");
+        });
+
+        function startExam() {
+            const el = document.documentElement;
+            if (el.requestFullscreen) {
+                el.requestFullscreen()
+                    .then(() => {
+                        sendLog("FullscreenEntered", "Fullscreen mode entered");
+                        window.parent.postMessage("start-interview", "*");
+                    })
+                    .catch(err => {
+                        sendLog("FullscreenError", err.message);
+                    });
+            } else {
+                sendLog("FullscreenUnsupported", "Fullscreen API not supported");
+            }
+        }
+    </script>
+</body>
+</html>

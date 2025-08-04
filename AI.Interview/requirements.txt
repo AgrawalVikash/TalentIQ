@@ -5,5 +5,9 @@ opencv-python
 docx2txt
 Pillow
 numpy
+flask
+python-docx
+PyPDF2
+flask_cors
 # pip install -r requirements.txt
 # streamlit run app.py
